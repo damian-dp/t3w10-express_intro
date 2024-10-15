@@ -1,19 +1,7 @@
-// Import the express library
-const express = require("express");
+const {app} = require('./server.js');
 
-// Create a new express application/instance
-const app = express();
-
-app.get("/", (request, response) => {
-	// response.send("<h1>Hello World!</h1>");
-
-	response.json({
-		message: "Hello World!",
-	});
-});
-
-const PORT = 3000;
+const PORT = process.env.PORT ?? 3000;
 
 app.listen(PORT, () => {
-	console.log(`Server is running on http://localhost:${PORT}`);
+	console.log(`Server listening on localhost:${PORT}`);
 });
