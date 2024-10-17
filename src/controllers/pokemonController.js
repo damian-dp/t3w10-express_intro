@@ -1,23 +1,46 @@
-const express = require("express");
+const express = require('express');
+const { getOrCreatePokemonNumber, getPokeApiData, trimPokeApiData } = require('../middleware/pokeApiMiddleware');
 
-// Create an instance of the express router, not a full express application
+// Create an instance of just a router, not a full server 
 const router = express.Router();
 
-// Pokemon API request
-router.get("/random", async (request, response) => {
-	let pokemonData = {};
-
-	let randomPokemonId = Math.floor(Math.random() * 100) + 1;
-	let responseData = await fetch(
-		"https://pokeapi.co/api/v2/pokemon/" + randomPokemonId
-	);
-
-	pokemonData = await responseData.json();
-
+router.get("/", (request, response) => {
 	response.json({
-		result: pokemonData,
+		message:"Pokemon routes live here!"
 	});
 });
 
-// Export the router for the main application to use
+// Pokemon API request 
+// localhost:3000/pokemon/random
+router.get("/random", async (request, response) => {
+	let pokemonData = {};
+
+	let randomNumber = Math.floor(Math.random() * 1025) + 1;
+	let responseData = await fetch("https://pokeapi.co/api/v2/pokemon/" + randomNumber);
+	pokemonData = await responseData.json();
+
+	response.json({
+		result: pokemonData
+	});
+});
+
+router.get(
+	"/randommiddleware", 
+	// Middleware goes here
+	getOrCreatePokemonNumber,
+	getPokeApiData,
+	trimPokeApiData, // -------> response.json early exit!
+	// 	|
+	//  |
+	//  v
+	// Middleware is finished by this point 
+	(request, response) => {
+	response.json({
+		result: "todo!"
+	});
+});
+
+// Export the router for the app to use 
+// since we must tell the app instance to load up routers 
 module.exports = router;
+// module.exports = {pokemonRouter};
